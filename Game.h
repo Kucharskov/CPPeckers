@@ -12,16 +12,21 @@ private:
 	Pos _selected;
 	Color _current;
 
+	void cleanKills(Pos, Pos, Color);
+	bool checkPromotion(Pos, Color);
+
 public:
 	Game(Color = Color::WHITE);
 
 	void alternateCurrent();
-	void selectField(Pos);
+	void selectPiece(Pos);
 	bool move(Pos);
 	Color getCurrent() const;
 	Result checkWin() const;
 	
 	//Metody <iostream> - do usuniêcia!
 	void draw();
+	void getSelectedMoves();
+	void getAttacers();
 };
 

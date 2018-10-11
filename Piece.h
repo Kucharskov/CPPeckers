@@ -22,5 +22,6 @@ public:
 	Color getColor() const;
 	Pos getPosition() const;
 	bool isPromoted() const;
+	bool canAttack() const;
 };
 

@@ -54,3 +54,13 @@ Color Board::getColor(Pos p) const {
 
 	return Color::EMPTY;
 }
+
+Moves Board::getAtackers(Color c) const {
+	Moves m;
+
+	for (auto piece : _pieces)
+		if (piece->getColor() == c && piece->canAttack())
+			m.push_back(piece->getPosition());
+	
+	return m;
+}

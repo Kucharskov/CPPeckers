@@ -1,61 +1,68 @@
 #include "Game.h"
 #include "Piece.h"
 
-Game::Game(Color c) :
-	_current(c),
+Game::Game(Color color) :
+	_current(color),
 	_selected(-1, -1) {
+}
+
+void Game::cleanKills(Pos from, Pos to, Color color) {
+	int dx = from.first - to.first;
+	int dy = from.second - to.second;
+	Color enemy = (color == Color::WHITE) ? Color::BLACK : Color::WHITE;
+
+	do {
+		if (dx > 0) dx--;
+		else if (dx < 0) dx++;
+		if (dy > 0) dy--;
+		else if (dy < 0) dy++;
+
+		if (_board.getColor({ to.first + dx, to.second + dy }) == enemy) {
+			_board.removePiece({ to.first + dx, to.second + dy });
+		}
+	} while (dx != 0 && dy != 0);
+}
+
+bool Game::checkPromotion(Pos pos, Color color) {
+	return (color == Color::WHITE && pos.second == 0) || (color == Color::BLACK && pos.second == 7);
 }
 
 void Game::alternateCurrent() {
 	_current = (_current == Color::WHITE) ? Color::BLACK : Color::WHITE;
 }
 
-void Game::selectField(Pos p) {
-	if (!_board.isLegitPos(p)) throw std::invalid_argument("Cant select, position is incorrect!");
-	if (_board.isEmpty(p)) throw std::invalid_argument("Cant select, position empty!");
-	_selected = p;
+void Game::selectPiece(Pos pos) {
+	if (!_board.isLegitPos(pos)) throw std::invalid_argument("Cant select, position is incorrect!");
+	if (_board.isEmpty(pos)) throw std::invalid_argument("Cant select, position empty!");
+	_selected = pos;
 }
 
-bool Game::move(Pos p) {
-	if (!_board.isLegitPos(p)) throw std::invalid_argument("Cant move here, position is incorrect!");
-	if (!_board.isEmpty(p)) throw std::invalid_argument("Cant move here, position is not empty!");
+bool Game::move(Pos pos) {
+	if (!_board.isLegitPos(pos)) throw std::invalid_argument("Cant move here, position is incorrect!");
+	if (!_board.isEmpty(pos)) throw std::invalid_argument("Cant move here, position is not empty!");
 	
 	Piece * piece = _board.getPiece(_selected);
-	Color c = piece->getColor();
-	if (c != getCurrent()) return false;
+	Color color = piece->getColor();
+	if (color != getCurrent()) return false;
 
 	Moves m = piece->getLegalMoves();
-	if (std::find(m.begin(), m.end(), p) != m.end()) {
-		if (c == Color::WHITE && p.second == 0) {
-			piece->promote();
-		}
-		if (c == Color::BLACK && p.second == 7) {
-			piece->promote();
-		}
-		_board.move(_selected, p);
+	if (!(std::find(m.begin(), m.end(), pos) != m.end())) return false;
 
-		int dx = p.first - _selected.first;
-		int dy = p.second - _selected.second;
-		Color enemy = (c == Color::WHITE) ? Color::BLACK : Color::WHITE;
-		bool killer = false;
-		
-		do {
-			if (dx > 0) dx--;
-			else if (dx < 0) dx++;
-			if (dy > 0) dy--;
-			else if (dy < 0) dy++;
+	Moves attackers = _board.getAtackers(color);
+	if (!attackers.empty()) {
+		if (!(std::find(attackers.begin(), attackers.end(), _selected) != attackers.end())) return false;
 
-			if (_board.getColor({ _selected.first + dx, _selected.second + dy }) == enemy) {
-				_board.removePiece({ _selected.first + dx, _selected.second + dy });
-				killer = true;
-			}
-		} while (dx != 0 && dy != 0);
-
-		if(!killer) alternateCurrent();
-		return true;
+		cleanKills(pos, _selected, color);
+		alternateCurrent();
 	}
 
-	return false;
+	if (checkPromotion(pos, color)) {
+		piece->promote();
+	}
+
+	_board.move(_selected, pos);
+	alternateCurrent();
+	return true;
 }
 
 Color Game::getCurrent() const {
@@ -88,5 +95,21 @@ void Game::draw() {
 		std::cout << std::endl;
 		if (y < 7) std::cout << "  ---------------" << std::endl;
 	}
+	std::cout << std::endl;
+}
+
+void Game::getSelectedMoves() {
+	Moves m = _board.getPiece(_selected)->getLegalMoves();
+
+	std::cout << "Moves: ";
+	for (auto e : m) std::cout << e.first << e.second << ", ";
+	std::cout << std::endl;
+}
+
+void Game::getAttacers() {
+	Moves m = _board.getAtackers(_current);
+
+	std::cout << "Atackers: ";
+	for (auto e : m) std::cout << e.first << e.second << ", ";
 	std::cout << std::endl;
 }

@@ -12,10 +12,14 @@ int main() {
 
 		if (err) std::cout << "Wrong move!" << std::endl;
 
+		g.getAttacers();
+
 		int choose;
 		std::cout << "Pick piece: ";
 		std::cin >> choose;
-		g.selectField({ choose / 10, choose % 10 });
+		g.selectPiece({ choose / 10, choose % 10 });
+
+		g.getSelectedMoves();
 
 		std::cout << "Move piece to: ";
 		std::cin >> choose;

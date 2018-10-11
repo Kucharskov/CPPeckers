@@ -18,5 +18,6 @@ public:
 	bool isEmpty(Pos) const;
 	bool isLegitPos(Pos) const;
 	Color getColor(Pos) const;
+	Moves getAtackers(Color) const;
 };
 
