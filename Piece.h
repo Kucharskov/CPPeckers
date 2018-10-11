@@ -9,15 +9,18 @@ protected:
 	Color _color;
 	Pos _position;
 	Board& _board;
+	bool _promoted;
 
-	virtual Moves getAttacks() const = 0;
+	Moves getAttacks();
 
 public:
 	Piece(Color, Pos, Board &);
 
 	void move(Pos);
+	void promote();
+	Moves getLegalMoves();
 	Color getColor() const;
 	Pos getPosition() const;
-	virtual Moves getLegalMoves() const = 0;
+	bool isPromoted() const;
 };
 

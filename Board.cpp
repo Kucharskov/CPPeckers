@@ -1,16 +1,20 @@
 #include "Board.h"
 #include "Piece.h"
-#include "Pawn.h"
-#include "Queen.h"
 
 Board::Board() {
 	for (int y = 0; y < 3; y++)
 		for (int x = (y + 1) % 2; x < 8; x += 2)
-			_pieces.push_back(new Pawn(Color::BLACK, {x, y}, *this));
+			_pieces.push_back(new Piece(Color::BLACK, {x, y}, *this));
 	
 	for (int y = 5; y < 8; y++)
 		for (int x = (y + 1) % 2; x < 8; x += 2)
-			_pieces.push_back(new Pawn(Color::WHITE, { x, y }, *this));
+			_pieces.push_back(new Piece(Color::WHITE, { x, y }, *this));
+
+	/*
+	//Two pieces wchich in next move will be promoted
+	_pieces.push_back(new Piece(Color::WHITE, { 4,1 }, *this));
+	_pieces.push_back(new Piece(Color::BLACK, { 3,6 }, *this));
+	*/
 }
 
 void Board::move(Pos from, Pos to) {
@@ -18,6 +22,19 @@ void Board::move(Pos from, Pos to) {
 		if (piece->getPosition() == from)
 			piece->move(to);
 	}
+}
+
+Piece * Board::getPiece(Pos p) {
+	for (auto piece : _pieces) {
+		if (piece->getPosition() == p)
+			return piece;
+	}
+
+	return nullptr;
+}
+
+void Board::removePiece(Pos p) {
+	_pieces.remove(getPiece(p));
 }
 
 bool Board::isEmpty(Pos p) const {

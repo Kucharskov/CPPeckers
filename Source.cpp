@@ -1,28 +1,27 @@
 #include <iostream>
-#include "Board.h"
+#include "Game.h"
 
 int main() {
-	Board b;
+	Game g;
 
-	for (int y = 0; y < 8; y++) {
-		std::cout << "|";
-		for (int x = 0; x < 8; x++) {
-			switch (b.getColor({ x, y })) {
-			case Color::EMPTY:
-				std::cout << " ";
-				break;
-			case Color::WHITE:
-				std::cout << "W";
-				break;
-			case Color::BLACK:
-				std::cout << "B";
-				break;
-			}
-			std::cout << "|";
-		}
-		std::cout << std::endl;
-		if (y < 7) std::cout << "-----------------" << std::endl;
-	}
+	bool err = false;
+	do {
+		system("CLS");
+		g.draw();
+		std::cout << "Turn: " << ((g.getCurrent() == Color::WHITE) ? "White" : "Black") << std::endl;
+
+		if (err) std::cout << "Wrong move!" << std::endl;
+
+		int choose;
+		std::cout << "Pick piece: ";
+		std::cin >> choose;
+		g.selectField({ choose / 10, choose % 10 });
+
+		std::cout << "Move piece to: ";
+		std::cin >> choose;
+		err = !g.move({ choose / 10, choose % 10 });
+		system("PAUSE");
+	} while (g.checkWin() == Result::NOWIN);
 
 	system("PAUSE");
 	return 0;

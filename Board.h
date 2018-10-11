@@ -4,8 +4,6 @@
 
 /* Forward declaration */
 class Piece;
-class Pawn;
-class Queen;
 
 class Board {
 private:
@@ -15,10 +13,10 @@ public:
 	Board();
 
 	void move(Pos, Pos);
+	Piece * getPiece(Pos);
+	void removePiece(Pos);
 	bool isEmpty(Pos) const;
 	bool isLegitPos(Pos) const;
 	Color getColor(Pos) const;
-
-	//friend class Piece;
 };
 
