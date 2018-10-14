@@ -18,15 +18,17 @@ Board::Board() {
 }
 
 void Board::move(Pos from, Pos to) {
-	for (auto piece : _pieces) {
+	for (auto piece : _pieces)
 		if (piece->getPosition() == from)
 			piece->move(to);
-	}
 }
 
 void Board::removePiece(Pos p) {
 	for (std::list<Piece *>::iterator i = _pieces.begin(); i != _pieces.end(); i++)
-		if((*i)->getPosition() == p) i = _pieces.erase(i);
+		if ((*i)->getPosition() == p) {
+			i = _pieces.erase(i);
+			break;
+		}
 }
 
 bool Board::isEmpty(Pos p) const {
@@ -39,28 +41,25 @@ bool Board::isLegitPos(Pos p) const {
 }
 
 bool Board::isPromoted(Pos p) const {
-	for (auto piece : _pieces) {
+	for (auto piece : _pieces)
 		if (piece->getPosition() == p)
 			return piece->isPromoted();
-	}
 
 	return false;
 }
 
 Color Board::getColor(Pos p) const {
-	for (auto piece : _pieces) {
+	for (auto piece : _pieces)
 		if (piece->getPosition() == p)
 			return piece->getColor();
-	}
 
 	return Color::EMPTY;
 }
 
 Moves Board::getLegalMoves(Pos p) const {
-	for (auto piece : _pieces) {
+	for (auto piece : _pieces)
 		if (piece->getPosition() == p)
 			return piece->getLegalMoves();
-	}
 
 	return {};
 }

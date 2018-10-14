@@ -17,9 +17,8 @@ void Game::cleanKills(Pos from, Pos to, Color color) {
 	while (checkPos != to) {
 		checkPos = checkPos + delta;
 
-		if (_board.getColor(checkPos) == enemy) {
+		if (_board.getColor(checkPos) == enemy)
 			_board.removePiece(checkPos);
-		}
 	}
 }
 
@@ -57,7 +56,8 @@ bool Game::move(Pos pos) {
 
 	if (killed) {
 		attackers = _board.getAtackers(color);
-		if ((std::find(attackers.begin(), attackers.end(), pos) != attackers.end())) alternateCurrent();
+		if ((std::find(attackers.begin(), attackers.end(), pos) != attackers.end()))
+			alternateCurrent();
 	}
 
 	return true;
