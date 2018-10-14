@@ -9,7 +9,7 @@ Board::Board() {
 	for (int y = 5; y < 8; y++)
 		for (int x = (y + 1) % 2; x < 8; x += 2)
 			_pieces.push_back(new Piece(Color::WHITE, { x, y }, *this));
-
+			
 	/*
 	//Two pieces wchich in next move will be promoted
 	_pieces.push_back(new Piece(Color::WHITE, { 4,1 }, *this));
@@ -24,17 +24,9 @@ void Board::move(Pos from, Pos to) {
 	}
 }
 
-Piece * Board::getPiece(Pos p) {
-	for (auto piece : _pieces) {
-		if (piece->getPosition() == p)
-			return piece;
-	}
-
-	return nullptr;
-}
-
 void Board::removePiece(Pos p) {
-	_pieces.remove(getPiece(p));
+	for (std::list<Piece *>::iterator i = _pieces.begin(); i != _pieces.end(); i++)
+		if((*i)->getPosition() == p) i = _pieces.erase(i);
 }
 
 bool Board::isEmpty(Pos p) const {
@@ -46,6 +38,15 @@ bool Board::isLegitPos(Pos p) const {
 	return true;
 }
 
+bool Board::isPromoted(Pos p) const {
+	for (auto piece : _pieces) {
+		if (piece->getPosition() == p)
+			return piece->isPromoted();
+	}
+
+	return false;
+}
+
 Color Board::getColor(Pos p) const {
 	for (auto piece : _pieces) {
 		if (piece->getPosition() == p)
@@ -54,6 +55,16 @@ Color Board::getColor(Pos p) const {
 
 	return Color::EMPTY;
 }
+
+Moves Board::getLegalMoves(Pos p) const {
+	for (auto piece : _pieces) {
+		if (piece->getPosition() == p)
+			return piece->getLegalMoves();
+	}
+
+	return {};
+}
+
 
 Moves Board::getAtackers(Color c) const {
 	Moves m;

@@ -13,11 +13,12 @@ public:
 	Board();
 
 	void move(Pos, Pos);
-	Piece * getPiece(Pos);
 	void removePiece(Pos);
 	bool isEmpty(Pos) const;
 	bool isLegitPos(Pos) const;
+	bool isPromoted(Pos) const;
 	Color getColor(Pos) const;
+	Moves getLegalMoves(Pos) const;
 	Moves getAtackers(Color) const;
 };
 

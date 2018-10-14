@@ -9,26 +9,38 @@ Piece::Piece(Color c, Pos p, Board &b) :
 }
 
 Moves Piece::getAttacks() {
-	Moves m;
-	Pos checkPos;
 	Color enemy = (getColor() == Color::WHITE) ? Color::BLACK : Color::WHITE;
+	int limit = (_promoted) ? 8 : 2;
+	std::array<Pos, 4> variants = {
+		std::make_pair(-1, -1),
+		std::make_pair(-1, 1),
+		std::make_pair(1, -1),
+		std::make_pair(1, 1)
+	};
+	Pos checkPos;
+	Moves m;
 
-	if (isPromoted()) {
-		//Not implemented Yet
-	} else {
-		for (int y = -1; y < 2; y += 2) {
-			for (int x = -1; x < 2; x += 2) {
-				checkPos = { _position.first + x, _position.second + y };
-				if (_board.isLegitPos(checkPos) && _board.getColor(checkPos) == enemy) {
-					checkPos = { _position.first + 2 * x, _position.second + 2 * y };
-					if (_board.isLegitPos(checkPos) && _board.isEmpty(checkPos))
-						m.push_back(checkPos);
-				}
+	for (auto variant : variants) {
+		bool flag = false;
+		for (int i = 1; i <= limit; i++) {
+			checkPos = _position + variant*i;
+			if (!_board.isLegitPos(checkPos) || _board.getColor(checkPos) == _color) break;
+			if (_board.isEmpty(checkPos)) {
+				if (flag) m.push_back(checkPos);
+				else continue;
+			}
+			if (_board.getColor(checkPos) == enemy) {
+				if (flag) break;
+				else flag = true;
 			}
 		}
 	}
 
 	return m;
+}
+
+void Piece::checkPromotion() {
+	if ((_color == Color::WHITE && _position.second == 0) || (_color == Color::BLACK && _position.second == 7)) _promoted = true;
 }
 
 Moves Piece::getLegalMoves() {
@@ -37,37 +49,34 @@ Moves Piece::getLegalMoves() {
 
 	if (m.empty()) {
 		if (isPromoted()) {
-			for (int i = 1; i < 8; i++) {
-				checkPos = { _position.first - i, _position.second - i };
-				if (!_board.isLegitPos(checkPos)) break;
-				if (!_board.isEmpty(checkPos)) break;
-				m.push_back(checkPos);
-			}
-			for (int i = 1; i < 8; i++) {
-				checkPos = { _position.first - i, _position.second + i };
-				if (!_board.isLegitPos(checkPos)) break;
-				if (!_board.isEmpty(checkPos)) break;
-				m.push_back(checkPos);
-			}
-			for (int i = 1; i < 8; i++) {
-				checkPos = { _position.first + i, _position.second - i };
-				if (!_board.isLegitPos(checkPos)) break;
-				if (!_board.isEmpty(checkPos)) break;
-				m.push_back(checkPos);
-			}
-			for (int i = 1; i < 8; i++) {
-				checkPos = { _position.first + i, _position.second + i };
-				if (!_board.isLegitPos(checkPos)) break;
-				if (!_board.isEmpty(checkPos)) break;
-				m.push_back(checkPos);
-			}
-		}
-		else {
-			int y = (_color == Color::WHITE) ? -1 : 1;
-			for (int x = -1; x < 2; x += 2) {
-				checkPos = { _position.first + x, _position.second + y };
-				if (_board.isLegitPos(checkPos) && _board.isEmpty(checkPos))
+			std::array<Pos, 4> variants = {
+				std::make_pair(-1, -1),
+				std::make_pair(-1, 1),
+				std::make_pair(1, -1),
+				std::make_pair(1, 1)
+			};
+
+			for (auto variant : variants) {
+				for (int i = 1; i < 8; i++) {
+					checkPos = _position + variant*i;
+					if (!_board.isLegitPos(checkPos) || !_board.isEmpty(checkPos)) break;
+					
 					m.push_back(checkPos);
+				}
+			}
+		} else {
+			std::array<Pos, 2> variants;
+			if (_color == Color::WHITE) {
+				variants[0] = { -1, -1 };
+				variants[1] = { 1, -1 };
+			} else {
+				variants[0] = { -1, 1 };
+				variants[1] = { 1, 1 };
+			}
+
+			for (auto variant : variants) {
+				checkPos = _position + variant;
+				if (_board.isLegitPos(checkPos) && _board.isEmpty(checkPos)) m.push_back(checkPos);
 			}
 		}
 	}
@@ -77,10 +86,7 @@ Moves Piece::getLegalMoves() {
 
 void Piece::move(Pos p) {
 	_position = p;
-}
-
-void Piece::promote() {
-	_promoted = true;
+	checkPromotion();
 }
 
 Color Piece::getColor() const {
@@ -96,21 +102,28 @@ bool Piece::isPromoted() const {
 }
 
 bool Piece::canAttack() const {
-	Pos checkPos;
 	Color enemy = (getColor() == Color::WHITE) ? Color::BLACK : Color::WHITE;
+	int limit = (_promoted) ? 8 : 2;
+	std::array<Pos, 4> variants = {
+		std::make_pair(-1, -1),
+		std::make_pair(-1, 1),
+		std::make_pair(1, -1),
+		std::make_pair(1, 1)
+	};
+	Pos checkPos;
 
-	if (isPromoted()) {
-		//Not implemented Yet
-	}
-	else {
-		for (int y = -1; y < 2; y += 2) {
-			for (int x = -1; x < 2; x += 2) {
-				checkPos = { _position.first + x, _position.second + y };
-				if (_board.isLegitPos(checkPos) && _board.getColor(checkPos) == enemy) {
-					checkPos = { _position.first + 2 * x, _position.second + 2 * y };
-					if (_board.isLegitPos(checkPos) && _board.isEmpty(checkPos))
-						return true;
-				}
+	for (auto variant : variants) {
+		bool flag = false;
+		for (int i = 1; i <= limit; i++) {
+			checkPos = _position + variant*i;
+			if (!_board.isLegitPos(checkPos) || _board.getColor(checkPos) == _color) break;
+			if (_board.isEmpty(checkPos)) {
+				if (flag) return true;
+				else continue;
+			}
+			if (_board.getColor(checkPos) == enemy) {
+				if (flag) break;
+				else flag = true;
 			}
 		}
 	}

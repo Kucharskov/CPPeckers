@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include "Utils.h"
 
 /* Forward declaration */
@@ -12,12 +13,12 @@ protected:
 	bool _promoted;
 
 	Moves getAttacks();
+	void checkPromotion();
 
 public:
 	Piece(Color, Pos, Board &);
 
 	void move(Pos);
-	void promote();
 	Moves getLegalMoves();
 	Color getColor() const;
 	Pos getPosition() const;

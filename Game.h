@@ -13,7 +13,6 @@ private:
 	Color _current;
 
 	void cleanKills(Pos, Pos, Color);
-	bool checkPromotion(Pos, Color);
 
 public:
 	Game(Color = Color::WHITE);
