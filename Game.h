@@ -17,9 +17,9 @@ private:
 public:
 	Game(Color = Color::WHITE);
 
-	void alternateCurrent();
-	void selectPiece(Pos);
 	bool move(Pos);
+	void selectPiece(Pos);
+	void alternateCurrent();
 	Color getCurrent() const;
 	Result checkWin() const;
 	

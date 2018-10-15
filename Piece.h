@@ -12,17 +12,17 @@ protected:
 	Board& _board;
 	bool _promoted;
 
-	Moves getAttacks();
 	void checkPromotion();
+	Moves getAttacks() const;
 
 public:
 	Piece(Color, Pos, Board &);
 
 	void move(Pos);
-	Moves getLegalMoves();
+	bool canAttack() const;
+	bool isPromoted() const;
 	Color getColor() const;
 	Pos getPosition() const;
-	bool isPromoted() const;
-	bool canAttack() const;
+	Moves getLegalMoves() const;
 };
 

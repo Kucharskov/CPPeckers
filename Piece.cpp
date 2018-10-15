@@ -8,7 +8,13 @@ Piece::Piece(Color c, Pos p, Board &b) :
 	_promoted(false) {
 }
 
-Moves Piece::getAttacks() {
+
+void Piece::checkPromotion() {
+	if ((_color == Color::WHITE && _position.second == 0) || (_color == Color::BLACK && _position.second == 7))
+		_promoted = true;
+}
+
+Moves Piece::getAttacks() const {
 	Color enemy = (getColor() == Color::WHITE) ? Color::BLACK : Color::WHITE;
 	int limit = (_promoted) ? 8 : 2;
 	std::array<Pos, 4> variants = {
@@ -39,11 +45,28 @@ Moves Piece::getAttacks() {
 	return m;
 }
 
-void Piece::checkPromotion() {
-	if ((_color == Color::WHITE && _position.second == 0) || (_color == Color::BLACK && _position.second == 7)) _promoted = true;
+void Piece::move(Pos p) {
+	_position = p;
+	checkPromotion();
 }
 
-Moves Piece::getLegalMoves() {
+bool Piece::canAttack() const {
+	return !getAttacks().empty();
+}
+
+bool Piece::isPromoted() const {
+	return _promoted;
+}
+
+Color Piece::getColor() const {
+	return _color;
+}
+
+Pos Piece::getPosition() const {
+	return _position;
+}
+
+Moves Piece::getLegalMoves() const {
 	Moves m = getAttacks();
 	Pos checkPos;
 
@@ -84,49 +107,3 @@ Moves Piece::getLegalMoves() {
 	return m;
 }
 
-void Piece::move(Pos p) {
-	_position = p;
-	checkPromotion();
-}
-
-Color Piece::getColor() const {
-	return _color;
-}
-
-Pos Piece::getPosition() const {
-	return _position;
-}
-
-bool Piece::isPromoted() const {
-	return _promoted;
-}
-
-bool Piece::canAttack() const {
-	Color enemy = (getColor() == Color::WHITE) ? Color::BLACK : Color::WHITE;
-	int limit = (_promoted) ? 8 : 2;
-	std::array<Pos, 4> variants = {
-		std::make_pair(-1, -1),
-		std::make_pair(-1, 1),
-		std::make_pair(1, -1),
-		std::make_pair(1, 1)
-	};
-	Pos checkPos;
-
-	for (auto variant : variants) {
-		bool flag = false;
-		for (int i = 1; i <= limit; i++) {
-			checkPos = _position + variant*i;
-			if (!_board.isLegitPos(checkPos) || _board.getColor(checkPos) == _color) break;
-			if (_board.isEmpty(checkPos)) {
-				if (flag) return true;
-				else continue;
-			}
-			if (_board.getColor(checkPos) == enemy) {
-				if (flag) break;
-				else flag = true;
-			}
-		}
-	}
-
-	return false;
-}

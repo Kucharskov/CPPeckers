@@ -22,16 +22,6 @@ void Game::cleanKills(Pos from, Pos to, Color color) {
 	}
 }
 
-void Game::alternateCurrent() {
-	_current = (_current == Color::WHITE) ? Color::BLACK : Color::WHITE;
-}
-
-void Game::selectPiece(Pos pos) {
-	if (!_board.isLegitPos(pos)) throw std::invalid_argument("Cant select, position is incorrect!");
-	if (_board.isEmpty(pos)) throw std::invalid_argument("Cant select, position empty!");
-	_selected = pos;
-}
-
 bool Game::move(Pos pos) {
 	if (!_board.isLegitPos(pos)) throw std::invalid_argument("Cant move here, position is incorrect!");
 	if (!_board.isEmpty(pos)) throw std::invalid_argument("Cant move here, position is not empty!");
@@ -61,6 +51,16 @@ bool Game::move(Pos pos) {
 	}
 
 	return true;
+}
+
+void Game::selectPiece(Pos pos) {
+	if (!_board.isLegitPos(pos)) throw std::invalid_argument("Cant select, position is incorrect!");
+	if (_board.isEmpty(pos)) throw std::invalid_argument("Cant select, position empty!");
+	_selected = pos;
+}
+
+void Game::alternateCurrent() {
+	_current = (_current == Color::WHITE) ? Color::BLACK : Color::WHITE;
 }
 
 Color Game::getCurrent() const {
