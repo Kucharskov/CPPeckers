@@ -11,7 +11,10 @@ enum class Result { NOWIN, BLACK, WHITE, DRAW };
 //Pozycja jako para
 using Pos = std::pair<int, int>;
 
-//Lista ruchów jako lista pozycji
+//Pojedynczy ruch jako para pozycji
+using Move = std::pair<Pos, Pos>;
+
+//Lista ruchów/pól jako lista pozycji
 using Moves = std::list<Pos>;
 
 //Operatory dla pozycji

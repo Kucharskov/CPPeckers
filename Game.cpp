@@ -4,7 +4,9 @@
 
 Game::Game(Color color) :
 	_current(color),
-	_selected(-1, -1) {
+	_selected(-1, -1),
+	_lastMove({ -1,-1 }, { -1,-1 }) {
+
 }
 
 void Game::cleanKills(Pos from, Pos to, Color color) {
@@ -50,6 +52,8 @@ bool Game::move(Pos pos) {
 			alternateCurrent();
 	}
 
+	_lastMove = { _selected, pos };
+
 	return true;
 }
 
@@ -67,6 +71,18 @@ Color Game::getCurrent() const {
 	return _current;
 }
 
+Move Game::getLastMove() const {
+	return _lastMove;
+}
+
+Moves Game::getSelectedMoves() const {
+	return _board.getLegalMoves(_selected);
+}
+
+Moves Game::getAttackers() const {
+	return _board.getAtackers(_current);
+}
+
 Result Game::checkWin() const {
 	//Not implemented yet
 	return Result::NOWIN;
@@ -77,7 +93,7 @@ void Game::draw() {
 	for (int y = 0; y < 8; y++) {
 		std::cout << y << " ";
 		for (int x = 0; x < 8; x++) {
-			if(x > 0) std::cout << "|";
+			if (x > 0) std::cout << "|";
 			switch (_board.getColor({ x, y })) {
 			case Color::EMPTY:
 				std::cout << " ";
@@ -93,21 +109,5 @@ void Game::draw() {
 		std::cout << std::endl;
 		if (y < 7) std::cout << "  ---------------" << std::endl;
 	}
-	std::cout << std::endl;
-}
-
-void Game::getSelectedMoves() {
-	Moves m = _board.getLegalMoves(_selected);
-
-	std::cout << "Moves: ";
-	for (auto e : m) std::cout << e.first << e.second << ", ";
-	std::cout << std::endl;
-}
-
-void Game::getAttacers() {
-	Moves m = _board.getAtackers(_current);
-
-	std::cout << "Atackers: ";
-	for (auto e : m) std::cout << e.first << e.second << ", ";
 	std::cout << std::endl;
 }

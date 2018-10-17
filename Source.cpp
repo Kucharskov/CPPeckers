@@ -3,7 +3,7 @@
 
 int main() {
 	Game g;
-
+	
 	bool err = false;
 	do {
 		system("CLS");
@@ -12,14 +12,18 @@ int main() {
 
 		if (err) std::cout << "Wrong move!" << std::endl;
 
-		g.getAttacers();
+		std::cout << "Atackers: ";
+		for (auto e : g.getAttackers()) std::cout << e.first << e.second << ", ";
+		std::cout << std::endl;
 
 		int choose;
 		std::cout << "Pick piece: ";
 		std::cin >> choose;
 		g.selectPiece({ choose / 10, choose % 10 });
 
-		g.getSelectedMoves();
+		std::cout << "Moves: ";
+		for (auto e : g.getSelectedMoves()) std::cout << e.first << e.second << ", ";
+		std::cout << std::endl;
 
 		std::cout << "Move piece to: ";
 		std::cin >> choose;
