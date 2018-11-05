@@ -20,5 +20,6 @@ public:
 	Color getColor(Pos) const;
 	Moves getLegalMoves(Pos) const;
 	Moves getAtackers(Color) const;
+	int countColorMoves(Color) const;
 };
 

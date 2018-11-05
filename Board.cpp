@@ -74,3 +74,13 @@ Moves Board::getAtackers(Color c) const {
 	
 	return m;
 }
+
+int Board::countColorMoves(Color c) const {
+	int counter = 0;
+
+	for (auto piece : _pieces)
+		if (piece->getColor() == c)
+			counter += piece->getLegalMoves().size();
+
+	return counter;
+}

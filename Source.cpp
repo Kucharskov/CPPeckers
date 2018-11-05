@@ -31,6 +31,18 @@ int main() {
 		system("PAUSE");
 	} while (g.checkWin() == Result::NOWIN);
 
+	switch (g.checkWin()) {
+		case Result::BLACK:
+			std::cout << "BLACK WIN!" << std::endl;
+			break;
+		case Result::WHITE:
+			std::cout << "WHITE WIN!" << std::endl;
+			break;
+		case Result::DRAW:
+			std::cout << "DRAW!" << std::endl;
+			break;
+	}
+
 	system("PAUSE");
 	return 0;
 }

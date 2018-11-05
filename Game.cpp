@@ -84,8 +84,13 @@ Moves Game::getAttackers() const {
 }
 
 Result Game::checkWin() const {
-	//Not implemented yet
-	return Result::NOWIN;
+	int blackMoves = _board.countColorMoves(Color::BLACK);
+	int whiteMoves = _board.countColorMoves(Color::WHITE);
+
+	if (blackMoves == 0 && whiteMoves == 0) return Result::DRAW;
+	else if (blackMoves == 0) return Result::WHITE;
+	else if (whiteMoves == 0) return Result::BLACK;
+	else return Result::NOWIN;
 }
 
 void Game::draw() {
